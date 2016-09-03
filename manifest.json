@@ -1,0 +1,61 @@
+{
+  "name": "jarvix",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Automate common tasks for cbi dev teams",
+  "icons": {
+    "16": "icons/cbilogo.png",
+    "48": "icons/cbilogo.png",
+    "128": "icons/cbilogo.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "scripts": [
+      "src/bg/server.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "icons/cbilogo.png",
+    "default_title": "Jarvix",
+    "default_popup": "src/browser_action/browser_action.html"
+  },
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite",
+    "contentSettings",
+    "contextMenus",
+    "cookies",
+    "management",
+    "notifications",
+    "tabs"
+  ],
+  "omnibox": {
+    "keyword": "n"
+  },
+  "content_scripts": [
+    {
+      "matches": [ "*://*/*" ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/common/index.js"
+      ]
+    },
+    {
+      "matches": ["https://www.google.com/*"],
+      "css": ["src/inject/inject.css"]
+    },
+    {
+      "matches": ["http://dev.test.cbinsights.com/*"],
+      "js": ["src/inject/screenshotHelper.js"]
+    },
+    {
+      "matches": ["https://jenkins.cbinsights.com/job/*"],
+      "js": ["src/inject/jenkinsHelper.js"]
+    },
+    {
+      "matches": ["http://crucible.cbinsights.com/*"],
+      "js": ["src/inject/reviewHelper.js"]
+    }
+  ]
+}
