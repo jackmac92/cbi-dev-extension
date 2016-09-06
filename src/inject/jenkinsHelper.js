@@ -4,7 +4,7 @@ const getInfo = () => {
     const testOutput = document.getElementsByClassName("console-output")[0].textContent
     let branch = testOutput.match(/\+ X_CBI_TEST_ENV=(\S+)/)[1]
     const testNameAndScreenshotPath = /_{4,}\s(\S+)\s_{4,}(?:\S|\s)*?(?:Screenshot at\s\n)(\/tmp\/\S+)/g
-    let screenshotMatches = testOutput.match(testNameAndScreenshotPath)
+    let screenshotMatches = testOutput.match(testNameAndScreenshotPath) || []
     result = []
     screenshots = screenshotMatches.map( el => {
       return {
