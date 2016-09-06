@@ -17,9 +17,10 @@
     }
 
     send(msg) {
-      if (this.sock.send) {
+      if (this.sock) {
         return this.sock.send(encodeURIComponent(JSON.stringify(msg)))
       } else {
+        alert("Jarvix websocket issue")
         return echo("Err no socket")
       }
     }
@@ -86,7 +87,6 @@
   const ws = new WebsocketWrapper();
 
   const notifier = (m) => {
-    chrome
     switch (m.action) {
       case "jenkinsScreenshot":
         title = "Found Screenshots"
@@ -116,25 +116,21 @@
 
   }
 
-
-
-
   const connected = (comPort) => {
     comPort.postMessage(("Background server connected"))
 
     let r = new Respond(ws.sock)
 
     comPort.onMessage.addListener((m) => {
-        
-        notificationId = notifier(m)
 
-        chrome.notifications.onClicked.addListener(
-          function handleClick(notifId) {
-            chrome.notifications.onClicked.removeListener(handleClick)
-            chrome.notifications.clear(notifId)
-            r.send(m)
-          }
-        )
+      notificationId = notifier(m)
+      chrome.notifications.onClicked.addListener(
+        function handleClick(notifId) {
+          chrome.notifications.onClicked.removeListener(handleClick)
+          chrome.notifications.clear(notifId)
+          r.send(m)
+        }
+      )
     })
   }
 
