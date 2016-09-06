@@ -23,4 +23,4 @@ const getInfo = () => {
 
 }
 
-whenPageReady(getInfo, /\/console$/)
+whenPageReady(getInfo)

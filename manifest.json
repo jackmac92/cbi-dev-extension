@@ -4,9 +4,9 @@
   "manifest_version": 2,
   "description": "Automate common tasks for cbi dev teams",
   "icons": {
-    "16": "icons/cbilogo.png",
-    "48": "icons/cbilogo.png",
-    "128": "icons/cbilogo.png"
+    "16": "icons/icon-bitty.png",
+    "48": "icons/icon-small.png",
+    "128": "icons/icon-large.png"
   },
   "default_locale": "en",
   "background": {
@@ -23,9 +23,6 @@
     "notifications",
     "tabs"
   ],
-  "omnibox": {
-    "keyword": "n"
-  },
   "content_scripts": [
     {
       "matches": [ "*://*/*" ],
@@ -35,19 +32,15 @@
       ]
     },
     {
-      "matches": ["https://www.google.com/*"],
-      "css": ["src/inject/inject.css"]
-    },
-    {
-      "matches": ["http://dev.test.cbinsights.com/*"],
+      "matches": ["*://dev.test.cbinsights.com/*"],
       "js": ["src/inject/screenshotHelper.js"]
     },
     {
-      "matches": ["https://jenkins.cbinsights.com/job/*"],
+      "matches": ["*://jenkins.cbinsights.com/job/*/*/console"],
       "js": ["src/inject/jenkinsHelper.js"]
     },
     {
-      "matches": ["http://crucible.cbinsights.com/*"],
+      "matches": ["*://crucible.cbinsights.com/cru/*"],
       "js": ["src/inject/reviewHelper.js"]
     }
   ]

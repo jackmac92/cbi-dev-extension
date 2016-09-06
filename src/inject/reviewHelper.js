@@ -17,4 +17,4 @@ const getInfo = () => {
 
 }
 
-whenPageReady(getInfo, /^[http://crucible.cbinsights.com/cru]\S+$/)
+whenPageReady(getInfo)
