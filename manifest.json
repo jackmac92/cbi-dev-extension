@@ -15,14 +15,7 @@
     ],
     "persistent": true
   },
-  "browser_action": {
-    "default_icon": "icons/cbilogo.png",
-    "default_title": "Jarvix",
-    "default_popup": "src/browser_action/browser_action.html"
-  },
   "permissions": [
-    "clipboardRead",
-    "clipboardWrite",
     "contentSettings",
     "contextMenus",
     "cookies",
