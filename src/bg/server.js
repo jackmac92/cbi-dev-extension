@@ -86,7 +86,7 @@
 
   const ws = new WebsocketWrapper();
 
-  const notifier = (m) => {
+  const notifier = (m, action) => {
     switch (m.action) {
       case "jenkinsScreenshot":
         title = "Found Screenshots"
@@ -110,11 +110,19 @@
         message: subTitle,
         iconUrl: "http://www.cbinsights.com/favicon.ico"
     }
-    notificationId = `${m.action}-${new Date() / 1000}`
-    chrome.notifications.create(notificationId, notificationOpts)
-    return notificationId
-
+    // notificationId = `${m.action}-${new Date() / 1000}`
+    chrome.notifications.create(notificationOpts, (createId) => {
+      var handler = (id) => {
+        if (id === createId) {
+          action()
+          chrome.notifications.clear(id)
+          chrome.notifications.onClicked.removeListener(handler)
+        }
+      }
+      chrome.notifications.onClicked.addListener(handler)
+    })
   }
+
 
   const connected = (comPort) => {
     comPort.postMessage(("Background server connected"))
@@ -122,15 +130,9 @@
     let r = new Respond(ws.sock)
 
     comPort.onMessage.addListener((m) => {
-
-      notificationId = notifier(m)
-      chrome.notifications.onClicked.addListener(
-        function handleClick(notifId) {
-          chrome.notifications.onClicked.removeListener(handleClick)
-          chrome.notifications.clear(notifId)
-          r.send(m)
-        }
-      )
+      notifier(m, () => {
+        r.send(m)
+      })
     })
   }
 
