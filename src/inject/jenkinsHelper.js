@@ -13,9 +13,13 @@ const getInfo = () => {
       }
     })
 
-    return {
-      "branch": branch,
-      "tests": screenshots
+    if (screenshots.length === 0) {
+      return void 0
+    } else {
+      return {
+        "branch": branch,
+        "tests": screenshots
+      }
     }
   }
 
