@@ -17,12 +17,11 @@
     }
 
     send(msg) {
-      if (this.sock) {
-        return this.sock.send(encodeURIComponent(JSON.stringify(msg)))
-      } else {
-        alert("Jarvix websocket issue")
-        return echo("Err no socket")
+      const msgEncoded = encodeURIComponent(JSON.stringify(msg))
+      if (!(this.sock)) {
+        alert("Couldn't find websocket")
       }
+      return this.sock.send(msgEncoded)
     }
   }
 
