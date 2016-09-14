@@ -7,7 +7,10 @@ const getInfo = () => {
       let branch = $(el).find(".tracked-branch-target-branch span.branch-name")[0].innerHTML
       non_empty = /\S{3,}/
       if (repo.match(non_empty) && branch.match(non_empty)) {
-        results.push([repo, branch])
+        results.push({
+          repo: repo,
+          branch: branch
+        })
       }
     })
     return (results.length > 0) ? results : void 0
