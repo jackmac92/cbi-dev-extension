@@ -3,11 +3,11 @@ const getInfo = () => {
     output = $("[ng-if='test.hasExtraInfo']").find(".ng-binding")[0].innerHTML
     matches = output.match(/(?:Screenshot at\s\n)(\/tmp\/\S+)/)
     screenshot = matches[matches.length - 1]
-    branch = $(".branch").text().split(' ')[0].split('/')[1]
-    if (branch !== undefined && screenshot !== undefined) {
+    env = $(".branch").text().split(' ')[0].split('/')[1]
+    if (env !== undefined && screenshot !== undefined) {
       return {
         "screenshot": screenshot,
-        "branch": branch
+        "env": env
       }
     } else {
       return void 0
@@ -16,5 +16,5 @@ const getInfo = () => {
 
   scrapeInfo("testScreenshot", infoFinder)
 }
-
+// window.addEventListener("hashchange", (event) => {})
 whenPageReady(getInfo, /^http:\/\/dev\.test\.cbinsights\.com\/#\/test\/\d+$/)
