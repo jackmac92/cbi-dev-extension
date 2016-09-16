@@ -1,5 +1,11 @@
 (() => {
 
+  chrome.browserAction.onClicked.addListener(() => {
+    console.log("reloading")
+    chrome.runtime.reload()
+  })
+
+
   const config = {
     host: "localhost",
     port: "7442",
@@ -19,7 +25,7 @@
     send(msg) {
       const msgEncoded = encodeURIComponent(JSON.stringify(msg))
       if (!(this.sock)) {
-        alert("Couldn't find websocket")
+        alert("Couldn't find websocket, make sure websocket server is running locally, and click extension icon to attempt reconnect")
       }
       return this.sock.send(msgEncoded)
     }
