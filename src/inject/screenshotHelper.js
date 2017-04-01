@@ -14,7 +14,7 @@ const getInfo = () => {
     }
   }
 
-  scrapeInfo("testScreenshot", infoFinder)
+  scrapeInfo("screenshotHandler", infoFinder)
 }
 // window.addEventListener("hashchange", (event) => {})
 whenPageReady(getInfo, /^http:\/\/dev\.test\.cbinsights\.com\/#\/test\/\d+$/)

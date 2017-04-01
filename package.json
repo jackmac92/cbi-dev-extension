@@ -1,0 +1,23 @@
+{
+  "name": "jarvix-extension",
+  "version": "1.0.0",
+  "main": "null",
+  "repository": "https://jackmac92@bitbucket.org/jackmac92/jarvix-extension.git",
+  "author": "Jack McCown <jmccown@cbinsights.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
+    "babel-generator": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-module-alias": "^1.6.0",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "babel-preset-es2015": "^6.18.0",
+    "jsfmt": "^0.5.3",
+    "webpack": "^1.14.0"
+  }
+}

@@ -16,7 +16,7 @@ const getInfo = () => {
     return (results.length > 0) ? results : void 0
   }
 
-  scrapeInfo("reviewInfo", reviewFinder)
+  scrapeInfo("reviewHandler", reviewFinder)
 
 }
 

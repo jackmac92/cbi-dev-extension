@@ -5,8 +5,8 @@ const scrapeInfo = (item, locator, validator) => {
       if (elementLocated(element)) {
         clearInterval(waitForEl)
         resolve({
-          "action": item,
-          "data": element
+          action: item,
+          data: element
         })
       } else {
         element = locator()

@@ -11,7 +11,7 @@
   "default_locale": "en",
   "background": {
     "scripts": [
-      "src/bg/server.js"
+      "js/background.bundle.js"
     ],
     "persistent": true
   },
@@ -40,12 +40,18 @@
       "js": ["src/inject/screenshotHelper.js"]
     },
     {
-      "matches": ["*://jenkins.cbinsights.com/job/*/*/console"],
+      "matches": [
+        "*://jenkins.cbinsights.com/job/*/*/console",
+        "*://jenkins.cbinsights.com/job/*/*/consoleFull",
+        "*://new-jenkins.cbinsights.com/job/*/*/console",
+        "*://new-jenkins.cbinsights.com/job/*/*/consoleFull"
+      ],
       "js": ["src/inject/jenkinsHelper.js"]
     },
     {
       "matches": ["*://crucible.cbinsights.com/cru/*"],
       "js": ["src/inject/reviewHelper.js"]
     }
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
 }
