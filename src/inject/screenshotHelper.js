@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import { scrapeInfo, whenPageReady } from '../common/utils'
+
 const getInfo = () => {
   const infoFinder = () => {
     output = $("[ng-if='test.hasExtraInfo']").find(".ng-binding")[0].innerHTML

@@ -1,6 +1,8 @@
-const getInfo = () => {
+import $ from 'jquery';
+import { scrapeInfo, whenPageReady } from '../common/utils'
 
-  const screenshotsFinder = () => {
+whenPageReady(() =>
+  scrapeInfo('jenkinsHandler', () => {
     const testOutput = document.getElementsByClassName('console-output')[0].textContent
     console.log('Starting')
     let env = testOutput.match(/X_CBI_TEST_ENV=(\S+)/)[1]
@@ -46,10 +48,5 @@ const getInfo = () => {
       console.log('Failed to get jenkins stuff')
       return void 0
     }
-  }
-
-  scrapeInfo('jenkinsHandler', screenshotsFinder)
-
-}
-
-whenPageReady(getInfo)
+  })
+);

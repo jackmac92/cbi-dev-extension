@@ -1,2 +1,4 @@
 .DS_STORE
+dev/*
+build/*
 node_modules/*

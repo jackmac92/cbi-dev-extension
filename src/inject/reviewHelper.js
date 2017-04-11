@@ -1,5 +1,8 @@
-const getInfo = () => {
-  const reviewFinder = () => {
+import $ from 'jquery';
+import { scrapeInfo, whenPageReady } from '../common/utils'
+
+whenPageReady(() =>
+  scrapeInfo('reviewHandler', () => {
     let branchList = $("table.tracked-branches-table > tbody > tr")
     let results = []
     branchList.each((i, el) => {
@@ -14,10 +17,5 @@ const getInfo = () => {
       }
     })
     return (results.length > 0) ? results : void 0
-  }
-
-  scrapeInfo("reviewHandler", reviewFinder)
-
-}
-
-whenPageReady(getInfo)
+  })
+)

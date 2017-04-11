@@ -1,4 +1,4 @@
-{
+module.exports = {
   "name": "jarvix",
   "version": "0.0.1",
   "manifest_version": 2,
@@ -10,17 +10,15 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": [
-      "js/background.bundle.js"
-    ],
+    "page": "background.html",
     "persistent": true
   },
   "permissions": [
     "contentSettings",
-    "contextMenus",
-    "cookies",
-    "management",
     "notifications",
+    "contextMenus",
+    "management",
+    "cookies",
     "tabs"
   ],
   "browser_action": {
@@ -29,28 +27,16 @@
   },
   "content_scripts": [
     {
-      "matches": [ "*://*/*" ],
-      "js": [
-        "js/jquery/jquery.min.js",
-        "src/common/index.js"
-      ]
-    },
-    {
       "matches": ["*://dev.test.cbinsights.com/*"],
-      "js": ["src/inject/screenshotHelper.js"]
+      "js": ["/js/screenshotHelper.bundle.js"]
     },
     {
-      "matches": [
-        "*://jenkins.cbinsights.com/job/*/*/console",
-        "*://jenkins.cbinsights.com/job/*/*/consoleFull",
-        "*://new-jenkins.cbinsights.com/job/*/*/console",
-        "*://new-jenkins.cbinsights.com/job/*/*/consoleFull"
-      ],
-      "js": ["src/inject/jenkinsHelper.js"]
+      "matches": ["*://jenkins.cbinsights.com/job/*/*/console*"],
+      "js": ["/js/jenkinsHelper.bundle.js"]
     },
     {
       "matches": ["*://crucible.cbinsights.com/cru/*"],
-      "js": ["src/inject/reviewHelper.js"]
+      "js": ["/js/reviewHelper.bundle.js"]
     }
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
