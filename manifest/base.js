@@ -28,15 +28,15 @@ module.exports = {
   "content_scripts": [
     {
       "matches": ["*://dev.test.cbinsights.com/*"],
-      "js": ["/js/screenshotHelper.bundle.js"]
+      "js": ["/js/screenshotHelper.js"]
     },
     {
       "matches": ["*://jenkins.cbinsights.com/job/*/*/console*"],
-      "js": ["/js/jenkinsHelper.bundle.js"]
+      "js": ["/js/jenkinsHelper.js"]
     },
     {
       "matches": ["*://crucible.cbinsights.com/cru/*"],
-      "js": ["/js/reviewHelper.bundle.js"]
+      "js": ["/js/reviewHelper.js"]
     }
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"

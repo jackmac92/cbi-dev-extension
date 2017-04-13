@@ -1,5 +1,5 @@
 const createWebpackServer = require('webpack-httpolyglot-server');
-const devConfig = require('../webpack/dev.config');
+const bgConfig = require('../webpack/background/');
 const tasks = require('./tasks');
 const isDocker = require('is-docker');
 const yoSay = require('yosay');
@@ -18,4 +18,5 @@ echo(`
    and load unpacked extensions with ./dev folder
 `);
 echo(yoSay(`Starting server at ${host}:${port}`));
-createWebpackServer(devConfig, { host, port });
+exec('webpack --config webpack/scripts/ --progress --profile --colors');
+createWebpackServer(bgConfig, { host, port });

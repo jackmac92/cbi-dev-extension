@@ -1,16 +1,23 @@
 const path = require('path');
 const webpack = require('webpack');
-
-const host = 'localhost';
+const isDocker = require('is-docker');
+const host = (isDocker()) ? '0.0.0.0' : 'localhost';
 const port = 3003;
-
-module.exports = {
+const outputDir = path.join(__dirname, '../dev/js');
+const baseConfig = () => ({
   devtool: 'eval-cheap-module-source-map',
-  entry: {
-    background: [path.join(__dirname, './src/bg/server.js')],
-  },
+  // devMiddleware: {
+  //   publicPath: `http://${host}:${port}/js`,
+  //   stats: {
+  //     colors: true
+  //   },
+  //   noInfo: true
+  // },
+  // hotMiddleware: {
+  //   path: '/js/__webpack_hmr'
+  // },
   output: {
-    path: path.join(__dirname, './js'),
+    path: outputDir,
     filename: '[name].bundle.js',
     chunkFilename: '[id].chunk.js'
   },
@@ -46,4 +53,6 @@ module.exports = {
       loader: 'json-loader'
     }]
   }
-};
+});
+
+module.exports = baseConfig;
