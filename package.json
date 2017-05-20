@@ -11,9 +11,13 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
+    "express": "^4.15.2",
+    "jenkins": "^0.20.0",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
-    "remote-redux-devtools": "^0.5.7"
+    "remote-redux-devtools": "^0.5.7",
+    "s3-download": "^1.0.0",
+    "shelljs": "^0.7.7"
   },
   "devDependencies": {
     "babel": "^6.5.2",

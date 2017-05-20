@@ -11,9 +11,7 @@ const crx = new ChromeExtension({
   privateKey: existsKey ? fs.readFileSync(keyPath) : null
 });
 
-crx.load('build')
-  .then(() => crx.loadContents())
-  .then(archiveBuffer => {
+crx.load('build').then(() => crx.loadContents()).then(archiveBuffer => {
     fs.writeFile(`${name}.zip`, archiveBuffer);
 
     if (!argv.codebase || !existsKey) return;

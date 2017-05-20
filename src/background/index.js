@@ -1,9 +1,20 @@
+// import express from 'express';
 import notifier from './notifier';
 
+// const app = express();
+
+// app.get('/restartExt/', (req, res) => {
+//   chrome.management.getSelf(ext =>
+//     chrome.management.setEnabled(ext.id, false, () =>
+//       chrome.management.setEnabled(ext.id, true)
+//     )
+//   );
+// });
+
 chrome.browserAction.onClicked.addListener(() => {
-  console.log('reloading')
-  chrome.runtime.reload()
-})
+  console.log('reloading');
+  chrome.runtime.reload();
+});
 
 const config = {
   host: 'localhost',
@@ -12,7 +23,7 @@ const config = {
   beat: 1000 * 60
 };
 
-const echo = (msg) => console.log(msg);
+const echo = msg => console.log(msg);
 
 class Respond {
   constructor(sock) {
@@ -20,30 +31,37 @@ class Respond {
   }
 
   send(msg) {
-    const msgEncoded = encodeURIComponent(JSON.stringify(msg))
-    if (!(this.sock)) {
-      if (confirm(`Couldn't find websocket, make sure websocket server is running locally, and click ok to reconnect`)) {
-        chrome.runtime.reload()
+    const msgEncoded = encodeURIComponent(JSON.stringify(msg));
+    if (!this.sock) {
+      if (
+        confirm(
+          `Couldn't find websocket, make sure websocket server is running locally, and click ok to reconnect`
+        )
+      ) {
+        chrome.runtime.reload();
       }
     }
-    return this.sock.send(msgEncoded)
+    return this.sock.send(msgEncoded);
   }
 }
 
 const requestHandler = (responder, msg) => {
-  self = func = window;
-  return 0
+  console.log(arguments);
+  return 0;
 };
-
 
 class WebsocketWrapper {
   constructor() {
-    this.count = 0
+    this.count = 0;
     let that = this;
     if (!('WebSocket' in window)) {
-      return echo(`No websocket in window, I'm out`)
+      return echo(`No websocket in window, I'm out`);
     }
-    if (!(this.sock = new WebSocket('ws://' + config.host + ':' + config.port + '/'))) {
+    if (
+      !(this.sock = new WebSocket(
+        'ws://' + config.host + ':' + config.port + '/'
+      ))
+    ) {
       echo('Could not create WebSocket: exiting');
       return;
     }
@@ -51,12 +69,12 @@ class WebsocketWrapper {
       echo('connected');
       that.respond = new Respond(that.sock);
       that.respond.send(['connected']);
-      chrome.runtime.onConnect.addListener(connected)
-      return that.interval = setInterval( () => {
+      chrome.runtime.onConnect.addListener(connected);
+      return (that.interval = setInterval(() => {
         return that.respond.send(`heartbeat ${++that.count}`);
-      }, config.beat);
+      }, config.beat));
     };
-    this.sock.onmessage = (event) => {
+    this.sock.onmessage = event => {
       const msg = JSON.parse(decodeURIComponent(event.data));
       return requestHandler(that.respond, msg);
     };
@@ -72,20 +90,19 @@ class WebsocketWrapper {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    ['interval', 'respond', 'sock'].forEach((attribute) => {
+    ['interval', 'respond', 'sock'].forEach(attribute => {
       delete that[attribute];
     });
     setTimeout(() => new WebsocketWrapper(), config.beat);
   }
-
 }
 
 const ws = new WebsocketWrapper();
 
-const connected = (comPort) => {
-  comPort.postMessage(('Background server connected'))
+const connected = comPort => {
+  comPort.postMessage('Background server connected');
 
-  let r = new Respond(ws.sock)
+  let r = new Respond(ws.sock);
 
   comPort.onMessage.addListener(m => notifier(m, () => r.send(m)));
 };

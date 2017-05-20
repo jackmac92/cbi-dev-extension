@@ -1,4 +1,4 @@
-const scrapeInfo = (item, locator, validator) => {
+export const scrapeInfo = (item, locator, validator) => {
   return new Promise( (resolve, reject) => {
     let element
     const waitForEl = setInterval(() => {
@@ -28,7 +28,7 @@ const elementLocated = (el, validator) => {
 
 }
 
-const whenPageReady = (action, urlSelector) => {
+export const whenPageReady = (action, urlSelector) => {
   const readyStateCheckInterval = setInterval(() => {
     if (document.readyState === "complete") {
       clearInterval(readyStateCheckInterval);
