@@ -8,7 +8,6 @@ module.exports = {
     '48': 'icons/icon-small.png',
     '128': 'icons/icon-large.png'
   },
-  default_locale: 'en',
   background: {
     page: 'background.html',
     persistent: true
