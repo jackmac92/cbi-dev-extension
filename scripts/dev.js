@@ -1,5 +1,5 @@
 const createWebpackServer = require('webpack-httpolyglot-server');
-const bgConfig = require('../webpack/background/dev.config.js');
+const bgConfig = require('../webpack/main/dev.config');
 const tasks = require('./tasks');
 const isDocker = require('is-docker');
 const yoSay = require('yosay');
@@ -23,7 +23,7 @@ echo(yoSay(`Starting server at ${host}:${port}`));
 setTimeout(
   () =>
     exec(
-      'webpack --watch --config webpack/scripts/dev.config.js --progress --profile --colors',
+      'webpack --watch --config webpack/scripts/dev.config --progress --profile --colors',
       { async: true }
     ),
   0

@@ -1,7 +1,7 @@
 require('shelljs/global');
 const fs = require('fs');
 const pug = require('pug');
-const manifest = require('../manifest/');
+const genManifest = require('../manifest/');
 
 exports.replaceWebpack = () => {
   const replaceTasks = [
@@ -51,7 +51,7 @@ const resetOutputPath = type => {
 const writeManifestFile = type =>
   fs.writeFile(
     `./${type}/manifest.json`,
-    JSON.stringify(manifest, null, 4),
+    JSON.stringify(genManifest(type), null, 4),
     err => {
       if (err) {
         console.log('Error generating manifest');
@@ -67,7 +67,7 @@ exports.copyAssets = type => {
   const env = type === 'build' ? 'prod' : type;
   resetOutputPath(type, env);
   writeManifestFile(type);
-  generateHTML(type);
+  generateHTML(type, env);
   cp('-R', './icons', type);
   cp('-R', './_locales', type);
 };

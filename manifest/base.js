@@ -9,10 +9,6 @@ module.exports = {
     '128': 'icons/icon-large.png'
   },
   default_locale: 'en',
-  background: {
-    page: 'background.html',
-    persistent: true
-  },
   permissions: [
     'contentSettings',
     'notifications',
@@ -28,15 +24,15 @@ module.exports = {
   content_scripts: [
     {
       matches: ['*://dev.test.cbinsights.com/*'],
-      js: ['/js/screenshotHelper.js']
+      js: ['/js/scripts/screenshotHelper.bundle.js']
     },
     {
       matches: ['*://jenkins.cbinsights.com/job/*/*/console*'],
-      js: ['/js/jenkinsHelper.js']
+      js: ['/js/scripts/jenkinsHelper.bundle.js']
     },
     {
       matches: ['*://crucible.cbinsights.com/cru/*'],
-      js: ['/js/reviewHelper.js']
+      js: ['/js/scripts/reviewHelper.bundle.js']
     }
   ],
   content_security_policy: "script-src 'self' 'unsafe-eval'; object-src 'self';"
