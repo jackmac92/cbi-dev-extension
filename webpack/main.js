@@ -36,18 +36,9 @@ module.exports = isProd => {
   }
   return Object.assign({}, baseConfig, {
     entry: {
-      app: [...entryMiddleware, path.join(workingDir, 'src/App/')],
-      inject: [customPath, path.join(workingDir, 'src/InjectPage/bootstrap')],
-      options: [
-        ...entryMiddleware,
-        path.join(workingDir, 'src/OptionsPage/bootstrap')
-      ],
       background: [
         ...entryMiddleware,
-        path.join(
-          workingDir,
-          `src/BackgroundProcess/${isProd ? '' : 'dev.'}index`
-        )
+        path.join(workingDir, `src/background/${isProd ? '' : 'dev.'}index`)
       ]
     },
     output: {

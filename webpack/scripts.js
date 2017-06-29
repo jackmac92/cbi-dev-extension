@@ -20,7 +20,7 @@ const listFiles = folder =>
 
 const nameNoExt = name => name.split('.').slice(0, -1).join('');
 
-const injectDir = path.join(workingDir, 'src/injectScripts/');
+const injectDir = path.join(workingDir, 'src/inject/');
 
 const getPlugins = isProd => {
   if (isProd) {
