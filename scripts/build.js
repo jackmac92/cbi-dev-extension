@@ -1,10 +1,12 @@
 const tasks = require('./tasks');
 
+const echo = console.log;
+
 tasks.replaceWebpack();
-console.log('[Copy assets]');
-console.log('-'.repeat(80));
+echo('[Copy assets]');
+echo('-'.repeat(80));
 tasks.copyAssets('build');
 
-console.log('[Webpack Build]');
-console.log('-'.repeat(80));
-tasks.webPacker('webpack/prod.config.js');
+echo('[Webpack Build]');
+echo('-'.repeat(80));
+exec('webpack --config webpack --env.production --progress --profile --colors');
