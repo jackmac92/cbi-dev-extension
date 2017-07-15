@@ -1,7 +1,7 @@
 require('shelljs/global');
 const fs = require('fs');
 const pug = require('pug');
-const genManifest = require('../manifest/');
+const manifest = require('../manifest/');
 
 exports.replaceWebpack = () => {
   const replaceTasks = [
@@ -31,7 +31,10 @@ const generateHTML = (type, env) => {
       .forEach(filename => {
         fs.writeFile(
           `./${type}/${filename}.html`,
-          pug.renderFile(`./src/views/${filename}.pug`, { env }),
+          pug.renderFile(`./src/views/${filename}.pug`, {
+            env,
+            port: process.env.DEV_PORT
+          }),
           err => {
             if (err) {
               console.log(`Error generating ${filename}`);
@@ -48,10 +51,15 @@ const resetOutputPath = type => {
   mkdir(type);
 };
 
+const copyStaticAssets = type => {
+  cp('-R', './assets/*', type);
+  cp('-R', './icons/', type);
+};
+
 const writeManifestFile = type =>
   fs.writeFile(
     `./${type}/manifest.json`,
-    JSON.stringify(genManifest(type), null, 4),
+    JSON.stringify(manifest, null, 4),
     err => {
       if (err) {
         console.log('Error generating manifest');
@@ -60,14 +68,10 @@ const writeManifestFile = type =>
     }
   );
 
-exports.webPacker = config =>
-  exec(`webpack --config ${config} --progress --profile --colors`);
-
 exports.copyAssets = type => {
   const env = type === 'build' ? 'prod' : type;
   resetOutputPath(type, env);
   writeManifestFile(type);
+  copyStaticAssets(type);
   generateHTML(type, env);
-  cp('-R', './icons', type);
-  cp('-R', './_locales', type);
 };

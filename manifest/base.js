@@ -1,6 +1,7 @@
+const version = require('../package.json').version;
 module.exports = {
 	name: 'jarvix',
-	version: '0.0.1',
+	version,
 	manifest_version: 2,
 	description: 'Automate common tasks for cbi dev teams',
 	icons: {
@@ -25,10 +26,6 @@ module.exports = {
 		default_title: 'Jarvix'
 	},
 	content_scripts: [
-		{
-			matches: ['*://dev.test.cbinsights.com/*'],
-			js: ['/js/scripts/screenshotHelper.bundle.js']
-		},
 		{
 			matches: ['*://jenkins.cbinsights.com/job/*/*/console*'],
 			js: ['/js/scripts/jenkinsHelper.bundle.js']

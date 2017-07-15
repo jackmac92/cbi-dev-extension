@@ -1,8 +1,9 @@
 const createWebpackServer = require('webpack-httpolyglot-server');
-const mainConfig = require('../webpack');
-const tasks = require('./tasks');
 const isDocker = require('is-docker');
 const yoSay = require('yosay');
+const mainConfig = require('../webpack');
+const tasks = require('./tasks');
+
 const echo = console.log;
 
 const port = process.env.DEV_PORT;

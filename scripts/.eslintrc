@@ -1,6 +1,7 @@
 {
   "env": {
-    "shelljs": true
+    "shelljs": true,
+    "node": true
   },
   "rules": {
     "no-console": 0

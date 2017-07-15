@@ -1,25 +1,31 @@
 const fs = require('fs');
 const ChromeExtension = require('crx');
+const path = require('path');
 /* eslint import/no-unresolved: 0 */
-const name = 'CB Insights';
+const name = 'cbi-dev-ext';
 const argv = require('minimist')(process.argv.slice(2));
 const keyPath = argv.key || 'key.pem';
 const existsKey = fs.existsSync(keyPath);
-const crx = new ChromeExtension({
-  appId: argv['app-id'],
-  codebase: argv.codebase,
-  privateKey: existsKey ? fs.readFileSync(keyPath) : null
-});
+const appId = process.env.APP_ID;
 
-crx.load('build').then(() => crx.loadContents()).then(archiveBuffer => {
-    fs.writeFile(`${name}.zip`, archiveBuffer);
+const main = async () => {
+  const crx = new ChromeExtension({
+    appId,
+    codebase: argv.codebase,
+    privateKey: existsKey ? fs.readFileSync(keyPath) : null
+  });
 
-    if (!argv.codebase || !existsKey) return;
-    crx.pack(archiveBuffer).then(crxBuffer => {
-      const updateXML = crx.generateUpdateXML();
+  await crx.load(path.resolve('build'));
+  const archiveBuffer = await crx.loadContents();
 
-      fs.writeFile('update.xml', updateXML);
-      fs.writeFile(`${name}.crx`, crxBuffer);
-    });
-  })
-  .catch(err => console.log(err));
+  fs.writeFile(`dist/${name}.zip`, archiveBuffer);
+
+  if (existsKey) {
+    const crxBuffer = await crx.pack(archiveBuffer);
+    const updateXML = crx.generateUpdateXML();
+    fs.writeFile('dist/update.xml', updateXML);
+    fs.writeFile(`dist/${name}.crx`, crxBuffer);
+  }
+};
+
+main();
