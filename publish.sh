@@ -1,12 +1,15 @@
 #! /bin/bash -ex
 
 APP_ID="njdpfahenljmkilaefpomkcghdlcooed"
-CLIENT_ID="408201917460-nos1kuiqhmmm6h5esocn5vv18u0hlj8l.apps.googleusercontent.com"
-CLIENT_SECRET="e1w9KvGe04sEsu28IAfuqeL2"
-REFRESH_TOKEN="1/PpNJKFcbWyGxTnGWoPQvkWcWx05hkLvfXaMN-x-K_Ro"
 FILE_NAME="./dist/cbi-dev-ext.zip"
 ACCESS_TOKEN=""
 UPLOADED_ITEM_ID=""
+
+CONSUL_KV="http://internal.consul-nomad.cfg.dev.cbinsights.com:8500/v1/kv/chrome-extension/publishing_auth"
+
+CLIENT_ID=$(curl "$CONSUL_KV/client_id?raw=true")
+CLIENT_SECRET=$(curl "$CONSUL_KV/client_secret?raw=true")
+REFRESH_TOKEN=$(curl "$CONSUL_KV/refresh_token?raw=true")
 
 build() {
     docker build . -t cbidevextension
@@ -47,7 +50,7 @@ publish() {
         "https://www.googleapis.com/chromewebstore/v1.1/items/$APP_ID/publish"
 }
 
-build
-refreshAccessToken
-uploadExtension
-publish
+# build
+# refreshAccessToken
+# uploadExtension
+# publish
