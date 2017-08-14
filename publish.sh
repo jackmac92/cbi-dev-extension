@@ -50,7 +50,7 @@ publish() {
         "https://www.googleapis.com/chromewebstore/v1.1/items/$APP_ID/publish"
 }
 
-# build
-# refreshAccessToken
-# uploadExtension
-# publish
+build
+refreshAccessToken
+uploadExtension
+publish
