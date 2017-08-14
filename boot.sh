@@ -1,6 +1,7 @@
 #! /bin/bash -ex
 
-APP_ID="jgnfghipbdephjpabbaijeofnkhdnmfc"
+# APP_ID="jgnfghipbdephjpabbaijeofnkhdnmfc"
+APP_ID="njdpfahenljmkilaefpomkcghdlcooed"
 
 npmBuild() {
     docker build . -t cbidevextension
@@ -16,7 +17,7 @@ errThang() {
     docker build . -t cbidevextension
     docker run \
         -e NODE_ENV="production" \
-        -e NODE_ENV="$APP_ID" \
+        -e APP_ID="$APP_ID" \
         -v $(pwd)/build:/usr/app/build \
         -v $(pwd)/dist:/usr/app/dist \
         --rm \
