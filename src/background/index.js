@@ -20,7 +20,7 @@ const config = {
   host: 'localhost',
   port: '7443',
   path: '',
-  beat: 1000 * 60
+  beat: 1000 * 60,
 };
 
 const echo = msg => console.log(msg);
@@ -34,9 +34,7 @@ class Respond {
     const msgEncoded = encodeURIComponent(JSON.stringify(msg));
     if (!this.sock) {
       if (
-        confirm(
-          `Couldn't find websocket, make sure websocket server is running locally, and click ok to reconnect`
-        )
+        confirm(`Couldn't find websocket, make sure websocket server is running locally, and click ok to reconnect`)
       ) {
         chrome.runtime.reload();
       }
@@ -46,44 +44,40 @@ class Respond {
 }
 
 const requestHandler = (responder, msg) => {
-  console.log(arguments);
-  return 0;
+  let target = window;
+  msg.path.split('.').forEach(piece => {
+    try {
+      target = target[piece];
+    } catch (e) {
+      responder.send(e);
+      throw e;
+    }
+  });
+  if (typeof target === 'function') {
+    target(...request.args, responder.send);
+  } else {
+    responder.send('idk');
+  }
 };
 
 class WebsocketWrapper {
   constructor() {
-    this.count = 0;
     let that = this;
-    if (!('WebSocket' in window)) {
-      return echo(`No websocket in window, I'm out`);
-    }
-    if (
-      !(this.sock = new WebSocket(
-        'ws://' + config.host + ':' + config.port + '/'
-      ))
-    ) {
-      echo('Could not create WebSocket: exiting');
-      return;
-    }
+    this.sock = new WebSocket('ws://' + config.host + ':' + config.port + '/');
     this.sock.onopen = () => {
       echo('connected');
       that.respond = new Respond(that.sock);
-      that.respond.send(['connected']);
+      that.respond.send(['crx connected']);
       chrome.runtime.onConnect.addListener(connected);
-      return (that.interval = setInterval(() => {
-        return that.respond.send('ping');
-      }, config.beat));
+      return (that.interval = setInterval(() => that.respond.send('ping'), config.beat));
     };
     this.sock.onmessage = event => {
       const msg = JSON.parse(decodeURIComponent(event.data));
       return requestHandler(that.respond, msg);
     };
-    this.sock.onerror = () => {
-      return that.sock.close();
-    };
-    this.sock.onclose = () => {
-      return that.close();
-    };
+    this.sock.onerror = () => that.sock.close();
+
+    this.sock.onclose = () => that.close();
   }
   close() {
     var that = this;
