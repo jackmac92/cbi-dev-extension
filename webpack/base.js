@@ -3,7 +3,7 @@ const isDocker = require('is-docker');
 
 const awd = isDocker()
   ? '/usr/app/'
-  : '/Users/jmccown/cbinsights/chrome-extension';
+  : '/Users/jmccown/workTools/dev-extension';
 
 module.exports = {
   config: {

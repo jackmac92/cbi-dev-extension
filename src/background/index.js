@@ -18,7 +18,7 @@ chrome.browserAction.onClicked.addListener(() => {
 
 const config = {
   host: 'localhost',
-  port: '7442',
+  port: '7443',
   path: '',
   beat: 1000 * 60
 };
@@ -71,7 +71,7 @@ class WebsocketWrapper {
       that.respond.send(['connected']);
       chrome.runtime.onConnect.addListener(connected);
       return (that.interval = setInterval(() => {
-        return that.respond.send(`heartbeat ${++that.count}`);
+        return that.respond.send('ping');
       }, config.beat));
     };
     this.sock.onmessage = event => {
