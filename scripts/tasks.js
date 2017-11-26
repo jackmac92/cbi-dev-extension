@@ -54,6 +54,7 @@ const resetOutputPath = type => {
 const copyStaticAssets = type => {
   cp('-R', './assets/*', type);
   cp('-R', './icons/', type);
+  cp('./node_modules/webextension-polyfill/dist/*', type);
 };
 
 const writeManifestFile = type =>

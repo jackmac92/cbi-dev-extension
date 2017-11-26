@@ -10,8 +10,10 @@ module.exports = {
 		'128': 'icons/icon-large.png'
 	},
 	background: {
-		page: 'background.html',
-		persistent: true
+		scripts: [
+			"browser-polyfill.js",
+			"/js/background.bundle.js"
+		],
 	},
 	permissions: [
 		'contentSettings',

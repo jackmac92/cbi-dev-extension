@@ -5,12 +5,12 @@ module.exports = {
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.IgnorePlugin(/[^/]+\/[\S]+.dev$/),
-    new webpack.optimize.UglifyJsPlugin({
-      comments: false,
-      compressor: {
-        warnings: false
-      }
-    })
+    // new webpack.optimize.UglifyJsPlugin({
+    //   comments: false,
+    //   compressor: {
+    //     warnings: false
+    //   }
+    // })
   ],
   dev: [
     new webpack.EnvironmentPlugin(['NODE_ENV', 'DEV_PORT']),

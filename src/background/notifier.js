@@ -1,10 +1,6 @@
 const notifier = (m, action = () => {}) => {
   let title;
   let subTitle;
-  console.log(m);
-  console.log(m);
-  console.log(m);
-  console.log(m);
   switch (m.action) {
     case 'jenkinsHandler':
       title = 'Found Screenshots';
@@ -31,7 +27,7 @@ const notifier = (m, action = () => {}) => {
   chrome.notifications.create(notificationOpts, createId => {
     const handler = id => {
       if (id === createId) {
-        action();
+        action(m);
         chrome.notifications.clear(id);
         chrome.notifications.onClicked.removeListener(handler);
       }

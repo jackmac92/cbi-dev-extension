@@ -21,9 +21,11 @@
     "express": "^4.15.2",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
+    "reconnecting-websocket": "^3.2.2",
     "remote-redux-devtools": "^0.5.7",
     "s3-download": "^1.0.0",
     "shelljs": "^0.7.7",
+    "webextension-polyfill": "^0.2.1",
     "ws": "^3.3.1"
   },
   "devDependencies": {
@@ -47,5 +49,9 @@
     "webpack-dashboard": "^0.4.0",
     "webpack-httpolyglot-server": "^0.2.2",
     "yosay": "^2.0.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^3.0.3",
+    "utf-8-validate": "^3.0.4"
   }
 }

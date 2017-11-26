@@ -1,102 +1,146 @@
-// import express from 'express';
 import notifier from './notifier';
+import { formatMsg } from './utils';
+import WebSocket from 'reconnecting-websocket';
 
-// const app = express();
-
-// app.get('/restartExt/', (req, res) => {
-//   chrome.management.getSelf(ext =>
-//     chrome.management.setEnabled(ext.id, false, () =>
-//       chrome.management.setEnabled(ext.id, true)
-//     )
-//   );
-// });
-
-chrome.browserAction.onClicked.addListener(() => {
-  console.log('reloading');
-  chrome.runtime.reload();
-});
-
+const host = 'localhost';
+const port = 7443;
+const snitchPort = 7444;
 const config = {
-  host: 'localhost',
-  port: '7443',
+  host,
+  port,
   path: '',
-  beat: 1000 * 60,
+};
+let ws;
+let wsSnitch;
+let listeners;
+
+const genericListener = (targetType, target) => (...info) =>
+  snitch({ type: 'event', target, targetType, info }).catch(err => {
+    console.error(`Generic listner event failed ${targetType}, ${target}`);
+    console.info(err);
+  });
+
+const createEventListeners = events =>
+  Object.keys(events).reduce(
+    (acc, entity) => [
+      ...acc,
+      ...events[entity].map(e => {
+        const name = e.slice(2).toLowerCase();
+        return [chrome[entity][e], genericListener(entity, name)];
+      }),
+    ],
+    []
+  );
+
+const manageEventListeners = (listeners, listenersOn = true) => {
+  const listenAction = listenersOn ? 'addListener' : 'removeListener';
+  listeners.map(([event, listener]) => event[listenAction](listener));
 };
 
-const echo = msg => console.log(msg);
-
-class Respond {
-  constructor(sock) {
-    this.sock = sock;
-  }
-
-  send(msg) {
-    const msgEncoded = encodeURIComponent(JSON.stringify(msg));
-    if (!this.sock) {
-      if (
-        confirm(`Couldn't find websocket, make sure websocket server is running locally, and click ok to reconnect`)
-      ) {
-        chrome.runtime.reload();
-      }
-    }
-    return this.sock.send(msgEncoded);
-  }
-}
-
-const requestHandler = (responder, msg) => {
-  let target = window;
-  msg.path.split('.').forEach(piece => {
-    try {
-      target = target[piece];
-    } catch (e) {
-      responder.send(e);
-      throw e;
+const handleRequest = ({ requestTarget, args }) =>
+  new Promise((resolve, reject) => {
+    switch (requestTarget) {
+      case 'establish_listeners':
+        try {
+          wsSnitch = new WebSocket(`ws://${host}:${snitchPort}`);
+          listeners = createEventListeners(args);
+          manageEventListeners(listeners);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+        break;
+      default:
+        reject('Unknown request target');
     }
   });
-  if (typeof target === 'function') {
-    target(...request.args, responder.send);
-  } else {
-    responder.send('idk');
+
+const handleCommand = ({ path, args = {} }) =>
+  new Promise((resolve, reject) => {
+    const opts = Object.keys(args).filter(k => args[k]).reduce((acc, k) => ({...acc, [k]: args[k]}), {});
+    let target = window;
+    path.split('.').forEach(piece => {
+      try {
+        target = target[piece];
+      } catch (e) {
+        reject(e);
+      }
+    });
+    try {
+      target(opts, resolve);
+    } catch (e) {
+      reject(e);
+    }
+  });
+
+const requestHandler = data => {
+  switch (data.type) {
+    case 'ping':
+      return Promise.resolve('pong');
+    case 'request':
+      return handleRequest(data);
+    case 'command':
+      return handleCommand(data);
+    default:
+      throw Error('Unknown type [command | request]');
   }
 };
 
-class WebsocketWrapper {
-  constructor() {
-    let that = this;
-    this.sock = new WebSocket('ws://' + config.host + ':' + config.port + '/');
-    this.sock.onopen = () => {
-      echo('connected');
-      that.respond = new Respond(that.sock);
-      that.respond.send(['crx connected']);
-      chrome.runtime.onConnect.addListener(connected);
-      return (that.interval = setInterval(() => that.respond.send('ping'), config.beat));
-    };
-    this.sock.onmessage = event => {
-      const msg = JSON.parse(decodeURIComponent(event.data));
-      return requestHandler(that.respond, msg);
-    };
-    this.sock.onerror = () => that.sock.close();
+const runtimeConnectedHandler = respnder => comPort => {
+  comPort.postMessage('Background server connected');
+  comPort.onMessage.addListener(m => notifier(m, respnder));
+};
 
-    this.sock.onclose = () => that.close();
-  }
-  close() {
-    var that = this;
-    if (this.interval) {
-      clearInterval(this.interval);
+ws = new WebSocket(`ws://${host}:${port}`);
+
+const snitch = (msg = null, error = false) =>
+  new Promise((resolve, reject) => {
+    try {
+      wsSnitch.send(formatMsg({ msg, error }));
+      resolve();
+    } catch (e) {
+      reject(e);
     }
-    ['interval', 'respond', 'sock'].forEach(attribute => {
-      delete that[attribute];
-    });
-    setTimeout(() => new WebsocketWrapper(), config.beat);
-  }
+  });
+
+const holla = (msg, triesCount = 0) => {
+  new Promise((resolve, reject) => {
+    if (ws.readyState !== 1) {
+      reject(Error('Socket not ready'));
+    }
+    try {
+      ws.send(formatMsg(msg));
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  })
 }
 
-const ws = new WebsocketWrapper();
+ws.onopen = () => chrome.runtime.onConnect.addListener(runtimeConnectedHandler(holla));
 
-const connected = comPort => {
-  comPort.postMessage('Background server connected');
+const responder = (msg = null, error = false) => holla({ error, msg });
 
-  let r = new Respond(ws.sock);
-
-  comPort.onMessage.addListener(m => notifier(m, () => r.send(m)));
+const respondSuccess = msg => {
+  console.log('Responding with success');
+  console.log(msg);
+  console.dir(msg);
+  responder(msg);
+}
+const respondError = msg => {
+  console.log('Responding with error');
+  console.error(msg);
+  responder(msg, true);
 };
+
+ws.onmessage = event => {
+  const { data } = event;
+  const msg = JSON.parse(decodeURIComponent(data));
+  console.log('Received message');
+  console.dir(msg);
+  return requestHandler(msg)
+    .then(respondSuccess, respondError)
+    .catch(respondError);
+};
+
+ws.onerror = console.error;
