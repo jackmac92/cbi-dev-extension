@@ -1,5 +1,5 @@
 import notifier from './notifier';
-import { formatMsg } from './utils';
+import { formatMsg, createEventListeners } from './utils';
 import WebSocket from 'reconnecting-websocket';
 
 const host = 'localhost';
@@ -20,18 +20,6 @@ const genericListener = (targetType, target) => (...info) =>
     console.info(err);
   });
 
-const createEventListeners = events =>
-  Object.keys(events).reduce(
-    (acc, entity) => [
-      ...acc,
-      ...events[entity].map(e => {
-        const name = e.slice(2).toLowerCase();
-        return [chrome[entity][e], genericListener(entity, name)];
-      }),
-    ],
-    []
-  );
-
 const manageEventListeners = (listeners, listenersOn = true) => {
   const listenAction = listenersOn ? 'addListener' : 'removeListener';
   listeners.map(([event, listener]) => event[listenAction](listener));
@@ -43,7 +31,7 @@ const handleRequest = ({ requestTarget, args }) =>
       case 'establish_listeners':
         try {
           wsSnitch = new WebSocket(`ws://${host}:${snitchPort}`);
-          listeners = createEventListeners(args);
+          listeners = createEventListeners(args, genericListener);
           manageEventListeners(listeners);
           resolve();
         } catch (e) {
@@ -57,7 +45,7 @@ const handleRequest = ({ requestTarget, args }) =>
 
 const handleCommand = ({ path, args = {} }) =>
   new Promise((resolve, reject) => {
-    const opts = Object.keys(args).filter(k => args[k]).reduce((acc, k) => ({...acc, [k]: args[k]}), {});
+    const opts = Object.keys(args).filter(k => args[k] !== null).reduce((acc, k) => ({...acc, [k]: args[k]}), {});
     let target = window;
     path.split('.').forEach(piece => {
       try {
@@ -122,22 +110,18 @@ ws.onopen = () => chrome.runtime.onConnect.addListener(runtimeConnectedHandler(h
 const responder = (msg = null, error = false) => holla({ error, msg });
 
 const respondSuccess = msg => {
-  console.log('Responding with success');
-  console.log(msg);
-  console.dir(msg);
-  responder(msg);
-}
+  console.debug('RESPONDING (SUCCESS)\n', msg);
+  responder(msg)
+};
 const respondError = msg => {
-  console.log('Responding with error');
-  console.error(msg);
-  responder(msg, true);
+  console.error('RESPONDING (FAILURE)\n', msg);
+  responder(msg, true)
 };
 
 ws.onmessage = event => {
   const { data } = event;
   const msg = JSON.parse(decodeURIComponent(data));
-  console.log('Received message');
-  console.dir(msg);
+  console.debug('WS Received msg\n', msg);
   return requestHandler(msg)
     .then(respondSuccess, respondError)
     .catch(respondError);
