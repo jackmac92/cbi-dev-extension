@@ -83,6 +83,9 @@ ws = new WebSocket(`ws://${host}:${port}`);
 
 const snitch = (msg = null, error = false) =>
   new Promise((resolve, reject) => {
+    if (wsSnitch.readyState !== 1) {
+      reject(Error('Socket not ready'));
+    }
     try {
       wsSnitch.send(formatMsg({ msg, error }));
       resolve();
